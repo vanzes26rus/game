@@ -7,7 +7,7 @@ def fire_bullet(screen, ai_settings, bullets, ship):
     """Инициализирует выстрел пули."""
     if len(bullets) < ai_settings.bullet_maximum:
         new_bullet = Bullet(ai_settings, ship, screen)
-        bullets.add(new_bullet)
+        bullets.add(new_bullet)аирр
 
 def update_bullets(bullets):
     """Вывод пули на экран."""
