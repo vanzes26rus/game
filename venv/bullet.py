@@ -6,7 +6,7 @@ class Bullet(Sprite):
     def __init__(self, ai_settings, ship, screen):
         super(Bullet, self).__init__()
         self.screen = screen
-        self.ai_settings = ai_settings рропро
+        self.ai_settings = ai_settings
         self.image = pygame.image.load("image/пуля.bmp")
         self.image.set_colorkey((ai_settings.bullet_bg_color))
         self.rect_bullet = self.image.get_rect()
