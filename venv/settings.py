@@ -4,7 +4,7 @@ class Settings():
         # настройки экрана
         self.screen_width = 800
         self.screen_height = 600
-        self.bg_color = (200, 200, 200)
+        self.bg_color = (230, 230, 230)
         # скорость коробля
         self.speed_ship = 1.3
         # настройки пули
