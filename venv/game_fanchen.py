@@ -54,14 +54,14 @@ def update_aliens(aliens):
 def get_number_rows(ai_settings, ship_height, alien_height):
     """Опредиляет количество рядов пришельцев."""
     # Количество доступных рядов
-    available_space_y = ai_settings.screen_height - ship_height - 3 * alien_height
+    available_space_y = ai_settings.screen_height - 2 * ship_height - 4 * alien_height
     # Количество доступных строк
     number_rows = int(available_space_y / alien_height)
     return number_rows
 
 
 def get_number_aliens_x(ai_settings, alien_widht):
-    available_space_x = ai_settings.screen_width - 2 * alien_widht
+    available_space_x = ai_settings.screen_width - 4 * alien_widht
     number_aliens_x = int(available_space_x / alien_widht)
     return number_aliens_x
 

@@ -12,7 +12,6 @@ from bullet import Bullet
 
 screen = pygame.display.set_mode((ai_settings.screen_width, ai_settings.screen_height))
 pygame.display.set_caption('Очередная попытка')
-bg_color = (ai_settings.bg_color)
 ship = Ship(screen, ai_settings)
 bullets = Group()
 aliens = Group()
