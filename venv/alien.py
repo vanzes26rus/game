@@ -15,14 +15,14 @@ class Alien(pygame.sprite.Sprite):
         self.rect.y = self.rect.height
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
-        self.speed = 0.123
+        self.speed = 1
     def update(self):
         """Обнавляет позицию иноплонетянина"""
         self.x += self.speed
         self.rect.x = self.x
         if self.rect.left <= 0 or self.rect.right >= 800:
             self.speed = -self.speed
-            if self.rect.left <= 0 or self.rect.right >= 750:
+            if self.rect.left <= 0 or self.rect.right >= 800:
                 self.rect.y += 39
 
     def blit_alien(self):

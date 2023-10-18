@@ -1,23 +1,43 @@
 import sys
 import pygame
+from time import sleep
 from bullet import Bullet
 from alien import Alien
 
+def ship_hit(stats, bullets, aliens, ai_settings, screen, ship):
+    """обнавляет позицию коробля и создает новый флот """
+    stats.ship_quantity -= 1
+#     очищает группы пуль и пришельцев
+    bullets.empty()
+    aliens.empty()
+#     создает новый флот пришельцев
+    create_fleet(ai_settings, screen, aliens, ship)
+#   обгавляет позицию корабля по середине экрана
+    ship.center_ship()
+#   пауза
+    sleep(2)
+
+def check_aliens_collisions(bullets, aliens):
+    """Обрабатывает колизии пули и пришельцев"""
+    collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
 def fire_bullet(screen, ai_settings, bullets, ship):
     """Инициализирует выстрел пули."""
     if len(bullets) < ai_settings.bullet_maximum:
         new_bullet = Bullet(ai_settings, ship, screen)
         bullets.add(new_bullet)
 
-def update_bullets(bullets):
+def update_bullets(bullets, aliens, ai_settings, screen, ship):
     """Вывод пули на экран."""
     for bullet in bullets.sprites():
         bullet.draw_bullet()
-
+        check_aliens_collisions(bullets, aliens)
+        if len(aliens) == 0:
+            bullets.empty()
+            create_fleet(ai_settings, screen, aliens, ship)
 def remove_bullets(bullets):
     """Удаление старых пуль на экране."""
     for bullet in bullets.copy():
-        if bullet.rect_bullet.bottom <= 0:
+        if bullet.rect.bottom <= 0:
             bullets.remove(bullet)
 
 def chek_keydown(event, ship, bullets, ai_settings, screen):
@@ -47,9 +67,13 @@ def chek_event(ship, bullets, ai_settings, screen):
                 check_keyup(event, ship)
 
 
-def update_aliens(aliens):
+def update_aliens(stats, bullets, aliens, ai_settings, screen, ship):
     """Обнавляет позицию энопланетян"""
     aliens.update()
+    if pygame.sprite.spritecollideany(ship, aliens):
+        print("Вы проиграли")
+        ship_hit(stats, bullets, aliens, ai_settings, screen, ship)
+
 
 def get_number_rows(ai_settings, ship_height, alien_height):
     """Опредиляет количество рядов пришельцев."""
@@ -61,7 +85,7 @@ def get_number_rows(ai_settings, ship_height, alien_height):
 
 
 def get_number_aliens_x(ai_settings, alien_widht):
-    available_space_x = ai_settings.screen_width - 4 * alien_widht
+    available_space_x = ai_settings.screen_width - (4 * alien_widht)
     number_aliens_x = int(available_space_x / alien_widht)
     return number_aliens_x
 
@@ -79,7 +103,7 @@ def create_fleet(ai_settings, screen, aliens, ship):
     """Создает флот пришеьцев."""
     alien = Alien(ai_settings, screen)
     number_aliens_x = get_number_aliens_x(ai_settings, alien.rect.width)
-    number_rows = int(get_number_rows(ai_settings, ship.rect_ship.height, alien.rect.height))
+    number_rows = int(get_number_rows(ai_settings, ship.rect.height, alien.rect.height))
 
     for row_number in range(number_rows):
         for alien_number in range(number_aliens_x):
@@ -87,11 +111,11 @@ def create_fleet(ai_settings, screen, aliens, ship):
 
 
 
-def update_screen(screen, ship, ai_settings, bullets, aliens):
+def update_screen(screen, ship, ai_settings, bullets, aliens, stats):
     screen.fill(ai_settings.bg_color)
-    update_bullets(bullets)
+    update_bullets(bullets, aliens, ai_settings, screen, ship)
     bullets.update()
-    update_aliens(aliens)
+    update_aliens(stats, bullets, aliens, ai_settings, screen, ship)
     remove_bullets(bullets)
     ship.blit_ship()
     aliens.draw(screen)

@@ -8,10 +8,11 @@ class Settings():
         self.bg_color = (230, 230, 230)
         # скорость коробля
         self.speed_ship = 0.8
+        self.speed_quantity = 3
         # настройки пули
-        self.bullet_speed_factor = 0.2
+        self.bullet_speed_factor = 0.125
         self.bullet_bg_color = 255, 255, 255
-        self.bullet_maximum = 5
+        self.bullet_maximum = 50
         # Настройки пришельца
         self.alien_bg_color = (255, 255, 255)
         self.alien_speed = 0.03
