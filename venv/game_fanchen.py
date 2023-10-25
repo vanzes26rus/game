@@ -3,19 +3,32 @@ import pygame
 from time import sleep
 from bullet import Bullet
 from alien import Alien
+from buttom import Buttom
 
+
+def check_aliens_bottom(stats, bullets, aliens, ai_settings, screen, ship):
+    """Проверяет соприкосновение пришельцев с нижнем краем игрового окна"""
+    screen = screen.get_rect()
+    for alien in aliens:
+        if  alien.rect.bottom >= screen.bottom:
+            ship_hit(stats, bullets, aliens, ai_settings, screen, ship)
+            break
 def ship_hit(stats, bullets, aliens, ai_settings, screen, ship):
     """обнавляет позицию коробля и создает новый флот """
-    stats.ship_quantity -= 1
+    if stats.ship_quantity > 0:
+        stats.ship_quantity -= 1
+        print(stats.ship_quantity)
 #     очищает группы пуль и пришельцев
-    bullets.empty()
-    aliens.empty()
+        bullets.empty()
+        aliens.empty()
 #     создает новый флот пришельцев
-    create_fleet(ai_settings, screen, aliens, ship)
+        create_fleet(ai_settings, screen, aliens, ship)
 #   обгавляет позицию корабля по середине экрана
-    ship.center_ship()
+        ship.center_ship()
 #   пауза
-    sleep(2)
+        sleep(2)
+    else:
+        stats.activ_game = False
 
 def check_aliens_collisions(bullets, aliens):
     """Обрабатывает колизии пули и пришельцев"""
@@ -41,6 +54,8 @@ def remove_bullets(bullets):
             bullets.remove(bullet)
 
 def chek_keydown(event, ship, bullets, ai_settings, screen):
+    # if event.key == pygame.K_UP:
+    #     ship.rect.centery -= 50
     if event.key == pygame.K_RIGHT:
         ship.movement_right = True
     if event.key == pygame.K_LEFT:
@@ -111,15 +126,23 @@ def create_fleet(ai_settings, screen, aliens, ship):
 
 
 
-def update_screen(screen, ship, ai_settings, bullets, aliens, stats):
+def update_screen(screen, ship, ai_settings, bullets, aliens, stats, play_buttom):
     screen.fill(ai_settings.bg_color)
     update_bullets(bullets, aliens, ai_settings, screen, ship)
     bullets.update()
-    update_aliens(stats, bullets, aliens, ai_settings, screen, ship)
+
+    if stats.activ_game:
+        # Проверяет количество жизней
+        update_aliens(stats, bullets, aliens, ai_settings, screen, ship)
+
+    check_aliens_bottom(stats, bullets, aliens, ai_settings, screen, ship)
     remove_bullets(bullets)
     ship.blit_ship()
     aliens.draw(screen)
     ship.ship_update(ai_settings)
+
+    if not stats.activ_game:
+        play_buttom.draw_buttom()
     pygame.display.flip()
 
 

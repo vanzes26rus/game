@@ -12,7 +12,7 @@ class Settings():
         # настройки пули
         self.bullet_speed_factor = 0.125
         self.bullet_bg_color = 255, 255, 255
-        self.bullet_maximum = 50
+        self.bullet_maximum = 6
         # Настройки пришельца
         self.alien_bg_color = (255, 255, 255)
         self.alien_speed = 0.03
