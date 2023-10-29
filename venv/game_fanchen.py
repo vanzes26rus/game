@@ -4,13 +4,14 @@ from time import sleep
 from bullet import Bullet
 from alien import Alien
 from buttom import Buttom
-
+from buttum_exit import Buttom_exit
+a = Alien(screen, ai_settings)
 
 def check_aliens_bottom(stats, bullets, aliens, ai_settings, screen, ship):
     """Проверяет соприкосновение пришельцев с нижнем краем игрового окна"""
     screen = screen.get_rect()
     for alien in aliens:
-        if  alien.rect.bottom >= screen.bottom:
+        if alien.rect.bottom >= screen.bottom:
             ship_hit(stats, bullets, aliens, ai_settings, screen, ship)
             break
 def ship_hit(stats, bullets, aliens, ai_settings, screen, ship):
@@ -26,9 +27,10 @@ def ship_hit(stats, bullets, aliens, ai_settings, screen, ship):
 #   обгавляет позицию корабля по середине экрана
         ship.center_ship()
 #   пауза
-        sleep(2)
+        sleep(1)
     else:
         stats.activ_game = False
+        pygame.mouse.set_visible(True)
 
 def check_aliens_collisions(bullets, aliens):
     """Обрабатывает колизии пули и пришельцев"""
@@ -46,7 +48,10 @@ def update_bullets(bullets, aliens, ai_settings, screen, ship):
         check_aliens_collisions(bullets, aliens)
         if len(aliens) == 0:
             bullets.empty()
+            ai_settings.changeable_settings()
+
             create_fleet(ai_settings, screen, aliens, ship)
+
 def remove_bullets(bullets):
     """Удаление старых пуль на экране."""
     for bullet in bullets.copy():
@@ -72,14 +77,41 @@ def check_keyup(event, ship):
         ship.movement_left = False
 
 
-def chek_event(ship, bullets, ai_settings, screen):
+def chek_event(ship, bullets, ai_settings, screen, stats, play_buttom, aliens, exit_buttom):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 chek_keydown(event, ship, bullets, ai_settings, screen)
+
             elif event.type == pygame.KEYUP:
                 check_keyup(event, ship)
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                """события мыши"""
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                check_play_buttom(mouse_x, mouse_y, stats, play_buttom, aliens, bullets, ship, ai_settings, screen)
+                # кнопка выхода из игры
+                check_exit_buttom(mouse_x, mouse_y, exit_buttom, stats)
+
+
+def check_exit_buttom(mouse_x, mouse_y, exit_buttom, stats):
+    """Функция кнопки выхода из игры"""
+    c = exit_buttom.rect.collidepoint(mouse_x, mouse_y)
+    if c and not stats.activ_game:
+        sys.exit()
+def check_play_buttom(mouse_x, mouse_y, stats, play_buttom, aliens, bullets, ship, ai_settings, screen):
+    """Проверяет нажатия мыши на кнопку играть"""
+    buttom_cleced = play_buttom.rect.collidepoint(mouse_x, mouse_y)
+    if buttom_cleced and not stats.activ_game:
+        # ai_settings.settings_game()
+        pygame.mouse.set_visible(False)
+        stats.stats_reset()
+        stats.activ_game = True
+        aliens.empty()
+        bullets.empty()
+        create_fleet(ai_settings, screen, aliens, ship)
+        ship.center_ship()
 
 
 def update_aliens(stats, bullets, aliens, ai_settings, screen, ship):
@@ -93,9 +125,10 @@ def update_aliens(stats, bullets, aliens, ai_settings, screen, ship):
 def get_number_rows(ai_settings, ship_height, alien_height):
     """Опредиляет количество рядов пришельцев."""
     # Количество доступных рядов
-    available_space_y = ai_settings.screen_height - 2 * ship_height - 4 * alien_height
+    available_space_y = ai_settings.screen_height - 3 * alien_height - ship_height
+
     # Количество доступных строк
-    number_rows = int(available_space_y / alien_height)
+    number_rows = int(available_space_y / (2 * alien_height))
     return number_rows
 
 
@@ -108,9 +141,9 @@ def get_number_aliens_x(ai_settings, alien_widht):
 def create_alien(ai_settings, screen, aliens, alien_number, row_number):
     alien = Alien(ai_settings, screen)
     alien_widht = alien.rect.width
-    alien.x = alien_widht + alien_widht * alien_number
+    alien.x = alien_widht + 1.3 * alien_widht * alien_number
     alien.rect.x = alien.x
-    alien.rect.y = alien.rect.height + alien.rect.height * row_number
+    alien.rect.y = alien.rect.height +  1.5 * alien.rect.height * row_number
     aliens.add(alien)
 
 
@@ -126,23 +159,25 @@ def create_fleet(ai_settings, screen, aliens, ship):
 
 
 
-def update_screen(screen, ship, ai_settings, bullets, aliens, stats, play_buttom):
-    screen.fill(ai_settings.bg_color)
-    update_bullets(bullets, aliens, ai_settings, screen, ship)
-    bullets.update()
+def update_screen(screen, ship, ai_settings, bullets, aliens, stats, play_buttom, exit_buttom):
+    screen.blit(ai_settings.bg_color, (0,0))
 
     if stats.activ_game:
         # Проверяет количество жизней
         update_aliens(stats, bullets, aliens, ai_settings, screen, ship)
 
-    check_aliens_bottom(stats, bullets, aliens, ai_settings, screen, ship)
-    remove_bullets(bullets)
+    update_bullets(bullets, aliens, ai_settings, screen, ship)
     ship.blit_ship()
     aliens.draw(screen)
+    bullets.update()
+    check_aliens_bottom(stats, bullets, aliens, ai_settings, screen, ship)
+    remove_bullets(bullets)
     ship.ship_update(ai_settings)
 
-    if not stats.activ_game:
+    if  stats.activ_game == False:
         play_buttom.draw_buttom()
+        exit_buttom.blit_buttom_exit()
+
     pygame.display.flip()
 
 

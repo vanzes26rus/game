@@ -8,11 +8,11 @@ class Bullet(Sprite):
         self.screen = screen
         self.ai_settings = ai_settings
         self.image = pygame.image.load("image/пуля.bmp")
+        self.image = pygame.transform.scale(self.image, (200, 80))
         self.image.set_colorkey((ai_settings.bullet_bg_color))
         self.rect = self.image.get_rect()
         self.rect.centerx = ship.rect.centerx
         self.rect.top = ship.rect.top
-
         self.speed_bullet = self.ai_settings.bullet_speed_factor
         self.bullet_run_y = float(self.rect.y)
 
