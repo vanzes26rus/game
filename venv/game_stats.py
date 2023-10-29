@@ -6,4 +6,4 @@ class Game_Stas():
         self.activ_game = False
     def stats_reset(self):
         """Обнавляет статистику в игре"""
-        self.ship_quantity = self.ai_settings.speed_quantity
+        self.ship_quantity = self.ai_settings.ship_quantity
